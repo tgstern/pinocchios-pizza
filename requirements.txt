@@ -1,4 +1,4 @@
-Django==3.0.6
+django
 gunicorn
 dj_database_url
 psycopg2
