@@ -1,0 +1,262 @@
+{% extends "orders/base.html" %}
+
+{% block title %}- Menu{% endblock %}
+
+{% block body %}
+<div class="container">
+    {% if user.is_authenticated %}
+    <div class="row justify-content-md-center mt-5">
+            <h1>Hello, {{ user.first_name }}!</h1>
+    </div>
+    {% endif %}
+    {% if message %}
+    <div class="row justify-content-md-center mt-5">
+    <div class="alert alert-dismissible alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p class="mb-0">{{ message }}</p>
+    </div>
+    </div>
+    {% endif %}
+    <div class="row justify-content-md-center">
+        <div class="col">
+           <h1 class="mt-5">Daily Pizza Specials</h1>
+            <table class="table table-hover mt-4">
+                <tbody>
+                    <tr>
+                        <th>Monday</th>
+                        <td>MARGHERITA - Mozzarella, Tomato, Pecorino, Basil</td>
+                    </tr>
+                    <tr>
+                        <th>Tuesday</th>
+                        <td>AMERICANO - Baby Arugula, Fresh Mozzarella, Tomato, Hot Honey, Post-Oven Prosciutto</td>
+                    </tr>
+                    <tr>
+                        <th>Wednesday</th>
+                        <td>SHRIMP SCAMPI - Roasted Shrimp, Garlic White Wine Sauce, Parmesan, Fresh Parsley</td>
+                    </tr>
+                    <tr>
+                        <th>Thursday</th>
+                        <td>CLAM &amp; BACON - Clam Sauce, Pecorino, Hot Pepper, Parsley</td>
+                    </tr>
+                    <tr>
+                        <th>Friday</th>
+                        <td>MAPLE BACON - Whole Milk Mozzarella, Red Onion, Smoked Vermont Bacon, Crispy Garlic, Spicy Sherry Maple Syrup</td>
+                    </tr>
+                    <tr>
+                        <th>Saturday</th>
+                        <td>MUSHROOM &amp; FONTINA - Mushroom Sauce, Pecorino, Gremolata</td>
+                    </tr>
+                    <tr>
+                        <th>Sunday</th>
+                        <td>HAWAIIAN - Smoked Pork Shoulder, Cilantro, Tomato, Pecorino, Scallions, Roasted Pineapple Salsa</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h1 class="mt-5">Pizzas</h1>
+            <p>Our regular pizza is a thin-crust or Neapolitan pizza, and come in 2 sizes: small (12" in diameter) and large (16" in diameter). The small is suitable for 1 to 2 people while the large feeds 2 to 4 people.</p>
+            <table class="table table-hover mt-4">
+                <tbody>
+                    {% for i in pizzas %}
+                    <form action="{% url 'add' %}" method="POST" id="add{{ i.id }}">
+                    {% csrf_token %}
+                    <input value="{{i.id}}" style="display:none" name="id">
+                    <tr>
+                        <td>{{ i.name }} </td>
+                        <td>
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="{{ i.id }}" name="{{ i.id }}" value="Large">
+                                    <label class="custom-control-label" for="{{ i.id }}">Large</label>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% with ''|center:i.toppings as range %}
+                            {% for j in range %}
+                            <div class="form-group">
+                                <select class="custom-select" id="top{{ i.id }}" name="top{{ i.id }}" required>
+                                    <option selected="" value="" disabled>Choose Topping</option>
+                                    {% for k in toppings %}
+                                    <option value="{{ k.id }}">{{ k.topping }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% endfor %}
+                            {% endwith %}
+                        </td>
+                        <td>$ <div style="display:inline-block" id="s{{ i.id }}">{{ i.sprice }}</div><div style="display:none" id="l{{ i.id }}">{{ i.lprice }}</div></td>
+                        <td><button type="submit" class="btn btn-primary">Add</button></td>
+                    </tr>
+                    </form>
+                    <script>
+                            var check{{ i.id }} = document.getElementById("{{ i.id }}");
+                            var s{{ i.id }} = document.getElementById("s{{ i.id }}");
+                            var l{{ i.id }} = document.getElementById("l{{ i.id }}");
+                            check{{ i.id }}.addEventListener( 'change', function() {
+                                if(this.checked) {
+                                    s{{ i.id }}.style.display = "none";
+                                    l{{ i.id }}.style.display = "inline-block";
+                                } else {
+                                    s{{ i.id }}.style.display = "inline-block";
+                                    l{{ i.id }}.style.display = "none";
+                                }
+                            });
+                    </script>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <h1 class="mt-5">Sicilian Pizzas</h1>
+            <p>Our sicilian pizza is a deep-dish or thick-crust pizza, which come in two sizes: a 9-slice or a 15-slice size. The 9-slice size is 16" x 16" and can feed 3 to 5 people. The 15-slice size is 28" x 16", comes in 2 large pizza boxes and can feed 6 to 9 people.</p>
+            <table class="table table-hover mt-4">
+                <tbody>
+                    {% for i in spizzas %}
+                    <form action="{% url 'add' %}" method="POST" id="add{{ i.id }}">
+                    {% csrf_token %}
+                    <input value="{{i.id}}" style="display:none" name="id">
+                    <tr>
+                        <td>{{ i.name }} </td>
+                        <td>
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="{{ i.id }}" name="{{ i.id }}" value="Large">
+                                    <label class="custom-control-label" for="{{ i.id }}">Large</label>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% with ''|center:i.toppings as range %}
+                            {% for j in range %}
+                            <div class="form-group">
+                                <select class="custom-select" id="top{{ i.id }}" name="top{{ i.id }}" required>
+                                    <option selected="" value="" disabled>Choose Topping</option>
+                                    {% for k in toppings %}
+                                    <option value="{{ k.id }}">{{ k.topping }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% endfor %}
+                            {% endwith %}
+                        </td>
+                        <td>$ <div style="display:inline-block" id="s{{ i.id }}">{{ i.sprice }}</div><div style="display:none" id="l{{ i.id }}">{{ i.lprice }}</div></td>
+                        <td><button type="submit" class="btn btn-primary">Add</button></td>
+                    </tr>
+                    </form>
+                    <script>
+                            var check{{ i.id }} = document.getElementById("{{ i.id }}");
+                            var s{{ i.id }} = document.getElementById("s{{ i.id }}");
+                            var l{{ i.id }} = document.getElementById("l{{ i.id }}");
+                            check{{ i.id }}.addEventListener( 'change', function() {
+                                if(this.checked) {
+                                    s{{ i.id }}.style.display = "none";
+                                    l{{ i.id }}.style.display = "inline-block";
+                                } else {
+                                    s{{ i.id }}.style.display = "inline-block";
+                                    l{{ i.id }}.style.display = "none";
+                                }
+                            });
+                    </script>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <h1 class="mt-5">Subs</h1>
+            <table class="table table-hover mt-4">
+                <tbody>
+                    {% for i in subs %}
+                    <form action="{% url 'add' %}" method="POST" id="add{{ i.id }}">
+                    {% csrf_token %}
+                    <input value="{{i.id}}" style="display:none" name="id">
+                    <tr>
+                        <td>{{ i.name }} </td>
+                        <td>
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="{{ i.id }}" name="{{ i.id }}" value="Large">
+                                    <label class="custom-control-label" for="{{ i.id }}">Large</label>
+                                </div>
+                            </div>
+                        </td>
+                        <td>$ <div style="display:inline-block" id="s{{ i.id }}">{{ i.sprice }}</div><div style="display:none" id="l{{ i.id }}">{{ i.lprice }}</div></td>
+                        <td><button type="submit" class="btn btn-primary">Add</button></td>
+                    </tr>
+                    </form>
+                    <script>
+                            var check{{ i.id }} = document.getElementById("{{ i.id }}");
+                            var s{{ i.id }} = document.getElementById("s{{ i.id }}");
+                            var l{{ i.id }} = document.getElementById("l{{ i.id }}");
+                            check{{ i.id }}.addEventListener( 'change', function() {
+                                if(this.checked) {
+                                    s{{ i.id }}.style.display = "none";
+                                    l{{ i.id }}.style.display = "inline-block";
+                                } else {
+                                    s{{ i.id }}.style.display = "inline-block";
+                                    l{{ i.id }}.style.display = "none";
+                                }
+                            });
+                    </script>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <h1 class="mt-5">Pasta &amp; Salads</h1>
+            <table class="table table-hover mt-4">
+                <tbody>
+                    {% for i in pastasalads %}
+                    <form action="{% url 'add' %}" method="POST" id="add{{ i.id }}">
+                    {% csrf_token %}
+                    <input value="{{i.id}}" style="display:none" name="id">
+                    <tr>
+                        <td>{{ i.name }} </td>
+                        <td>$ {{ i.sprice }}</td>
+                        <td><button type="submit" class="btn btn-primary">Add</button></td>
+                    </tr>
+                    </form>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <h1 class="mt-5">Dinner Platters</h1>
+            <table class="table table-hover mt-4">
+                <tbody>
+                    {% for i in platters %}
+                    <form action="{% url 'add' %}" method="POST" id="add{{ i.id }}">
+                    {% csrf_token %}
+                    <input value="{{i.id}}" style="display:none" name="id">
+                    <tr>
+                        <td>{{ i.name }} </td>
+                        <td>
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="{{ i.id }}" name="{{ i.id }}" value="Large">
+                                    <label class="custom-control-label" for="{{ i.id }}">Large</label>
+                                </div>
+                            </div>
+                        </td>
+                        <td>$ <div style="display:inline-block" id="s{{ i.id }}">{{ i.sprice }}</div><div style="display:none" id="l{{ i.id }}">{{ i.lprice }}</div></td>
+                        <td><button type="submit" class="btn btn-primary">Add</button></td>
+                    </tr>
+                    </form>
+                    <script>
+                            var check{{ i.id }} = document.getElementById("{{ i.id }}");
+                            var s{{ i.id }} = document.getElementById("s{{ i.id }}");
+                            var l{{ i.id }} = document.getElementById("l{{ i.id }}");
+                            check{{ i.id }}.addEventListener( 'change', function() {
+                                if(this.checked) {
+                                    s{{ i.id }}.style.display = "none";
+                                    l{{ i.id }}.style.display = "inline-block";
+                                } else {
+                                    s{{ i.id }}.style.display = "inline-block";
+                                    l{{ i.id }}.style.display = "none";
+                                }
+                            });
+                    </script>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
